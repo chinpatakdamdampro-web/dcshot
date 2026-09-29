@@ -84,9 +84,7 @@ public final class DiscordShotPlugin extends JavaPlugin {
         }
 
         getLogger().info("DiscordShot enabled. Waiting for Discord to connect...");
-        getLogger().info("First time here? If screenshots ever fail with a browser/executable");
-        getLogger().info("error, run this once from a terminal (same user that runs the server):");
-        getLogger().info("  java -jar " + jarFileName() + " install chromium");
+        getLogger().info("Screenshots need Google Chrome installed on this machine (or browser.executable-path set in config.yml).");
     }
 
     @Override
@@ -109,11 +107,4 @@ public final class DiscordShotPlugin extends JavaPlugin {
         }
     }
 
-    private String jarFileName() {
-        try {
-            return new java.io.File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getName();
-        } catch (Exception e) {
-            return "DiscordShot-1.0.0.jar";
-        }
-    }
 }
