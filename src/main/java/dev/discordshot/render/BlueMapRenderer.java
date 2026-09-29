@@ -73,7 +73,7 @@ public final class BlueMapRenderer {
         }
     }
 
-    private static String[] chromiumArgs(List<String> extra) {
+    private static List<String> chromiumArgs(List<String> extra) {
         List<String> args = new ArrayList<>(List.of(
                 "--headless=new",
                 // Headless Chromium (~M121+) blocks software-rendered WebGL by default;
@@ -89,7 +89,7 @@ public final class BlueMapRenderer {
                 "--disable-dev-shm-usage"
         ));
         args.addAll(extra);
-        return args.toArray(new String[0]);
+        return args;
     }
 
     private static String hideUiCss(RenderRequest request) {
