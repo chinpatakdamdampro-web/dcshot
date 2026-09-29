@@ -6,9 +6,9 @@ import dev.discordshot.render.BlueMapRenderer;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.security.auth.login.LoginException;
 import java.util.Collections;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -72,7 +72,7 @@ public final class DiscordShotPlugin extends JavaPlugin {
                     .setActivity(Activity.watching("for /screenshot"))
                     .addEventListeners(new ScreenshotCommand(this, settings, renderExecutor, renderer))
                     .build();
-        } catch (LoginException e) {
+        } catch (InvalidTokenException e) {
             getLogger().severe("Discord rejected the bot token in config.yml: " + e.getMessage());
             getLogger().severe("Double-check bot-token, then restart the server. Disabling DiscordShot.");
             getServer().getPluginManager().disablePlugin(this);
