@@ -20,9 +20,6 @@ jobs:
           java-version: '21'
           cache: maven
 
-      # No platform profile here on purpose: this build includes Playwright's driver for
-      # every OS, so the jar it produces works regardless of what OS the *Minecraft server*
-      # (not this runner) happens to be on. See the README for smaller, single-OS builds.
       - name: Build with Maven
         run: mvn -B package
 
