@@ -20,22 +20,14 @@
         <!-- Library versions. Bump these over time - check:
                Paper:      https://github.com/PaperMC/Paper (README shows the current version)
                JDA:        https://github.com/discord-jda/JDA/releases
-               Playwright: https://github.com/microsoft/playwright-java/releases -->
+               (No browser-automation library is bundled: the plugin drives a system Chrome directly.) -->
         <paper.api.version>1.21.11-R0.1-SNAPSHOT</paper.api.version>
         <jda.version>6.5.0</jda.version>
-        <playwright.version>1.56.0</playwright.version>
         <slf4j.version>2.0.16</slf4j.version>
 
         <!-- Bundled libraries are moved into this package so they can never clash with other plugins. -->
         <shade.prefix>dev.discordshot.libs</shade.prefix>
 
-        <!-- Jar name suffix and Playwright driver folders to leave out of the jar.
-             Overridden by the platform profiles at the bottom of this file. -->
-        <jar.suffix></jar.suffix>
-        <pw.drop.1>drop-nothing/**</pw.drop.1>
-        <pw.drop.2>drop-nothing/**</pw.drop.2>
-        <pw.drop.3>drop-nothing/**</pw.drop.3>
-        <pw.drop.4>drop-nothing/**</pw.drop.4>
     </properties>
 
     <repositories>
@@ -74,16 +66,10 @@
             </exclusions>
         </dependency>
 
-        <!-- Headless browser automation (shaded into the plugin jar). -->
-        <dependency>
-            <groupId>com.microsoft.playwright</groupId>
-            <artifactId>playwright</artifactId>
-            <version>${playwright.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}-${project.version}${jar.suffix}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
 
         <resources>
             <!-- plugin.yml gets the project version filled in. -->
@@ -175,10 +161,6 @@
                                     <pattern>com.google.protobuf</pattern>
                                     <shadedPattern>${shade.prefix}.protobuf</shadedPattern>
                                 </relocation>
-                                <relocation>
-                                    <pattern>com.google.gson</pattern>
-                                    <shadedPattern>${shade.prefix}.gson</shadedPattern>
-                                </relocation>
                             </relocations>
 
                             <filters>
@@ -192,29 +174,10 @@
                                         <exclude>module-info.class</exclude>
                                     </excludes>
                                 </filter>
-                                <!-- Optionally drop Playwright drivers for other operating systems (see profiles). -->
-                                <filter>
-                                    <artifact>com.microsoft.playwright:driver-bundle</artifact>
-                                    <excludes>
-                                        <exclude>${pw.drop.1}</exclude>
-                                        <exclude>${pw.drop.2}</exclude>
-                                        <exclude>${pw.drop.3}</exclude>
-                                        <exclude>${pw.drop.4}</exclude>
-                                    </excludes>
-                                </filter>
                             </filters>
 
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <manifestEntries>
-                                        <!-- Bukkit reads plugin.yml's own "main:" key and never looks at this - this
-                                             entry only matters if someone runs `java -jar` directly (see DiscordShotCLI).
-                                             No remapping hint is needed here: the plugin only calls public
-                                             Bukkit/Paper API and never touches internal (NMS) classes. -->
-                                        <Main-Class>dev.discordshot.DiscordShotCLI</Main-Class>
-                                    </manifestEntries>
-                                </transformer>
                             </transformers>
                         </configuration>
                     </execution>
@@ -223,40 +186,4 @@
         </plugins>
     </build>
 
-    <!--
-      The Playwright driver bundle ships a Node.js runtime for EVERY operating system (~160 MB).
-      These profiles build a much smaller jar for one platform: mvn package -Plinux-x64
-    -->
-    <profiles>
-        <profile>
-            <id>linux-x64</id>
-            <properties>
-                <jar.suffix>-linux-x64</jar.suffix>
-                <pw.drop.1>driver/linux-arm64/**</pw.drop.1>
-                <pw.drop.2>driver/mac/**</pw.drop.2>
-                <pw.drop.3>driver/mac-arm64/**</pw.drop.3>
-                <pw.drop.4>driver/win32_x64/**</pw.drop.4>
-            </properties>
-        </profile>
-        <profile>
-            <id>linux-arm64</id>
-            <properties>
-                <jar.suffix>-linux-arm64</jar.suffix>
-                <pw.drop.1>driver/linux/**</pw.drop.1>
-                <pw.drop.2>driver/mac/**</pw.drop.2>
-                <pw.drop.3>driver/mac-arm64/**</pw.drop.3>
-                <pw.drop.4>driver/win32_x64/**</pw.drop.4>
-            </properties>
-        </profile>
-        <profile>
-            <id>windows-x64</id>
-            <properties>
-                <jar.suffix>-windows-x64</jar.suffix>
-                <pw.drop.1>driver/linux/**</pw.drop.1>
-                <pw.drop.2>driver/linux-arm64/**</pw.drop.2>
-                <pw.drop.3>driver/mac/**</pw.drop.3>
-                <pw.drop.4>driver/mac-arm64/**</pw.drop.4>
-            </properties>
-        </profile>
-    </profiles>
 </project>
