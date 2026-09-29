@@ -11,8 +11,8 @@ bot-token: "PASTE_YOUR_BOT_TOKEN_HERE"
 # Leave it empty ("") to allow the command in every channel of the server.
 allowed-channel-id: ""
 
-# How screenshots are made. Only "BLUEMAP" exists at the moment: a headless browser opens
-# your BlueMap web page and takes a picture of it (no graphics card needed).
+# How screenshots are made. Only "BLUEMAP" exists at the moment: a headless Google Chrome
+# opens your BlueMap web page and takes a picture of it (no graphics card needed).
 render-method: "BLUEMAP"
 
 # Address of your BlueMap web server, as seen from THIS machine.
@@ -70,7 +70,8 @@ limits:
   cooldown-seconds: 10
 
 browser:
-  # Use an already installed Chrome/Chromium instead of downloading one. Empty = download automatically.
+  # Full path to Chrome/Chromium, e.g. "/usr/bin/google-chrome-stable".
+  # Empty = auto-detect an installed Google Chrome. (Avoid snap-packaged Chromium.)
   executable-path: ""
   # Extra command-line flags for the browser, e.g. ["--proxy-server=..."].
   extra-args: []
