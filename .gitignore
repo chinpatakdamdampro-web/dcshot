@@ -1,0 +1,17 @@
+# Build output
+target/
+dependency-reduced-pom.xml
+
+# Never commit a downloaded project zip or secrets
+*.zip
+.env
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+*.log
+.DS_Store

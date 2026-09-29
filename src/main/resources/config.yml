@@ -1,0 +1,80 @@
+# ======================================================================
+#  DiscordShot - config.yml
+#  Edit the values below, then restart the server.
+# ======================================================================
+
+# Your Discord bot token (Discord Developer Portal -> your application -> Bot -> Reset Token).
+# KEEP IT SECRET. Never paste it into a public repository.
+bot-token: "PASTE_YOUR_BOT_TOKEN_HERE"
+
+# Only allow /screenshot in this text channel. Put the channel ID in quotes.
+# Leave it empty ("") to allow the command in every channel of the server.
+allowed-channel-id: ""
+
+# How screenshots are made. Only "BLUEMAP" exists at the moment: a headless browser opens
+# your BlueMap web page and takes a picture of it (no graphics card needed).
+render-method: "BLUEMAP"
+
+# Address of your BlueMap web server, as seen from THIS machine.
+bluemap-url: "http://localhost:8100"
+
+
+# ----------------------------------------------------------------------
+#  Optional settings
+# ----------------------------------------------------------------------
+
+# Register the slash command only in this Discord server (guild) so it shows up instantly.
+# Empty = register globally (Discord can take a few minutes to show global commands).
+guild-id: ""
+
+# Public address of your BlueMap (e.g. "https://map.example.com").
+# When set, every screenshot gets an "Open in BlueMap" link. Empty = no link.
+public-map-url: ""
+
+# World used when /screenshot is typed without a world. Empty = the first loaded world.
+default-world: ""
+
+# Only needed if your BlueMap map IDs differ from the world names.
+# Format:   <minecraft world name>: "<BlueMap map id>"
+# Example:
+#   map-ids:
+#     world: "overworld"
+#     world_nether: "nether"
+map-ids: {}
+
+screenshot:
+  # Picture size in pixels.
+  width: 1280
+  height: 720
+  # How long to wait (milliseconds) after the page has loaded so the 3D map can draw.
+  # Increase this if screenshots come out half-empty; the server has no real GPU.
+  render-wait-ms: 3000
+  # Give up on a screenshot after this many milliseconds.
+  page-timeout-ms: 30000
+  # Camera settings (used when /screenshot has no "distance" option).
+  default-distance: 120.0
+  # Camera rotation and tilt in radians. Tilt 0 = straight down, about 1.4 = almost horizontal.
+  rotation: 0.0
+  tilt: 0.75
+  # Hide BlueMap's buttons, menus and labels so only the 3D view is in the picture.
+  hide-ui: true
+  # Advanced: your own CSS to inject instead of the built-in "hide everything except the map" rule.
+  hide-ui-css: ""
+  # "png" (sharp, bigger files) or "jpeg" (smaller files).
+  format: "png"
+
+limits:
+  # How many screenshots may wait in line while another one is being rendered.
+  max-queue: 4
+  # Seconds each Discord user has to wait between screenshots (0 = no limit).
+  cooldown-seconds: 10
+
+browser:
+  # Use an already installed Chrome/Chromium instead of downloading one. Empty = download automatically.
+  executable-path: ""
+  # Extra command-line flags for the browser, e.g. ["--proxy-server=..."].
+  extra-args: []
+
+# Advanced: how the BlueMap address is built. Placeholders: {map} {x} {y} {z} {distance} {rotation} {tilt}
+# Only change this if a future BlueMap version changes its URL format.
+view-template: "#{map}:{x}:{y}:{z}:{distance}:{rotation}:{tilt}:0:0:perspective"

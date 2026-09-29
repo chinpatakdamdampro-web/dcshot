@@ -1,0 +1,8 @@
+name: DiscordShot
+version: '${project.version}'
+main: dev.discordshot.DiscordShotPlugin
+api-version: '1.21'
+description: Adds a /screenshot Discord slash command that posts BlueMap renders of any location.
+authors: [DiscordShot]
+# Load after BlueMap when both are installed (BlueMap is optional to be on the same machine).
+softdepend: [BlueMap]
