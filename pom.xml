@@ -10,24 +10,20 @@
     <packaging>jar</packaging>
 
     <name>DiscordShot</name>
-    <description>Discord /screenshot command that posts BlueMap renders (Paper/Spigot plugin)</description>
+    <description>Discord /screenshot command that posts BlueMap tile images (no browser needed)</description>
 
     <properties>
-        <!-- Compiled for Java 21 so the same jar runs on Java 21 servers (1.21.x) and newer (26.x on Java 25). -->
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Library versions. Bump these over time - check:
-               Paper:      https://github.com/PaperMC/Paper (README shows the current version)
-               JDA:        https://github.com/discord-jda/JDA/releases
-               (No browser-automation library is bundled: the plugin drives a system Chrome directly.) -->
+        <!-- Bump these over time:
+             Paper:  https://github.com/PaperMC/Paper
+             JDA:    https://github.com/discord-jda/JDA/releases -->
         <paper.api.version>1.21.11-R0.1-SNAPSHOT</paper.api.version>
         <jda.version>6.5.0</jda.version>
-        <slf4j.version>2.0.16</slf4j.version>
 
-        <!-- Bundled libraries are moved into this package so they can never clash with other plugins. -->
+        <!-- Relocate shaded libs so they never clash with other plugins -->
         <shade.prefix>dev.discordshot.libs</shade.prefix>
-
     </properties>
 
     <repositories>
@@ -38,61 +34,56 @@
     </repositories>
 
     <dependencies>
-        <!-- Provided by the server at runtime. -->
+        <!-- Provided by the server at runtime -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${paper.api.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- JSON for talking to Chrome. Paper/Spigot ship Gson, so it is not bundled. -->
+
+        <!-- Gson is already on the server classpath via Paper -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.11.0</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
+            <version>2.0.16</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- Discord bot (shaded into the plugin jar). -->
+        <!-- Discord bot — shaded into the plugin jar -->
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
             <version>${jda.version}</version>
             <exclusions>
-                <!-- Audio natives: not needed for slash commands. -->
+                <!-- Not needed: we only send slash commands, not voice -->
                 <exclusion>
                     <groupId>club.minnced</groupId>
                     <artifactId>opus-java</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
-
     </dependencies>
 
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
-
         <resources>
-            <!-- plugin.yml gets the project version filled in. -->
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <includes>
-                    <include>plugin.yml</include>
-                </includes>
+                <includes><include>plugin.yml</include></includes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
-                <excludes>
-                    <exclude>plugin.yml</exclude>
-                </excludes>
+                <excludes><exclude>plugin.yml</exclude></excludes>
             </resource>
         </resources>
 
@@ -110,19 +101,14 @@
                 <executions>
                     <execution>
                         <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
+                        <goals><goal>shade</goal></goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-
                             <artifactSet>
                                 <excludes>
-                                    <!-- The server already provides SLF4J. -->
                                     <exclude>org.slf4j:slf4j-api</exclude>
                                 </excludes>
                             </artifactSet>
-
                             <relocations>
                                 <relocation>
                                     <pattern>net.dv8tion.jda</pattern>
@@ -169,7 +155,6 @@
                                     <shadedPattern>${shade.prefix}.protobuf</shadedPattern>
                                 </relocation>
                             </relocations>
-
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -182,7 +167,6 @@
                                     </excludes>
                                 </filter>
                             </filters>
-
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
@@ -192,5 +176,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
